@@ -1,18 +1,40 @@
-import { Brain, AlertTriangle } from "lucide-react";
+import { Brain, AlertTriangle, ChevronDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useState } from "react";
 
 const AIRiskSummary = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
   return (
     <Card className="shadow-lg animate-fade-in hover:shadow-xl transition-shadow border-l-4 border-l-primary">
-      <CardHeader className="border-b bg-accent/30">
-        <CardTitle className="flex items-center gap-2">
-          <Brain className="h-5 w-5 text-primary" />
-          AI Risk Summary
-          <Badge variant="secondary" className="ml-auto">Auto-Generated</Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-6">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CardHeader className="border-b bg-accent/30">
+          <div className="flex items-center justify-between w-full">
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              AI Risk Summary
+              <Badge variant="secondary">Auto-Generated</Badge>
+            </CardTitle>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    isOpen ? "transform rotate-180" : ""
+                  }`}
+                />
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </CardHeader>
+        <CollapsibleContent>
+          <CardContent className="pt-6">
         <div className="flex gap-3 mb-4">
           <AlertTriangle className="h-5 w-5 text-orange-500 flex-shrink-0 mt-0.5" />
           <div>
@@ -35,7 +57,9 @@ const AIRiskSummary = () => {
             <li>• Last major updates over 8 years ago</li>
           </ul>
         </div>
-      </CardContent>
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 };
