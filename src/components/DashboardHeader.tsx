@@ -1,30 +1,79 @@
-import { Building2, Download } from "lucide-react";
+import { Download, Globe, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useState } from "react";
 
 const DashboardHeader = () => {
+  const [language, setLanguage] = useState<"EN" | "FR">("EN");
+
   const handleDownloadReport = () => {
-    // Mock download functionality
     console.log("Downloading report...");
   };
 
+  const toggleLanguage = (lang: "EN" | "FR") => {
+    setLanguage(lang);
+    console.log(`Language changed to ${lang}`);
+  };
+
   return (
-    <header className="bg-secondary text-secondary-foreground shadow-md">
-      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
+      <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-3">
-          <Building2 className="h-8 w-8" />
-          <div>
-            <h1 className="text-2xl font-bold">Intact Financial</h1>
-            <p className="text-sm opacity-90">Risk Intelligence Dashboard</p>
+          <SidebarTrigger className="text-foreground" />
+          <div className="hidden sm:block">
+            <h1 className="text-xl font-bold text-primary">Risk Intelligence Dashboard</h1>
           </div>
         </div>
-        
-        <Button 
-          onClick={handleDownloadReport}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
-        >
-          <Download className="h-4 w-4" />
-          Download Report
-        </Button>
+
+        <div className="flex items-center gap-3">
+          {/* Language Toggle */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Globe className="h-4 w-4" />
+                <span>{language}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => toggleLanguage("EN")}>
+                English
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toggleLanguage("FR")}>
+                Français
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* User Profile */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="rounded-full">
+                <User className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Sign Out</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Download Report Button */}
+          <Button
+            onClick={handleDownloadReport}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+            size="sm"
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Download Report</span>
+          </Button>
+        </div>
       </div>
     </header>
   );
