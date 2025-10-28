@@ -1,4 +1,4 @@
-import { Building, Star, MapPin } from "lucide-react";
+import { Building, Star, MapPin, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -44,6 +44,21 @@ const BusinessInfoCard = () => {
             Location
           </label>
           <p className="text-base">123 Queen St W, Toronto, ON M5H 2M9</p>
+        </div>
+        
+        <div>
+          <label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+            <ExternalLink className="h-4 w-4" />
+            Website
+          </label>
+          <a 
+            href="https://www.evergreenbistro-demo.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary hover:text-primary/80 underline text-base transition-colors"
+          >
+            www.evergreenbistro-demo.com
+          </a>
         </div>
       </CardContent>
     </Card>

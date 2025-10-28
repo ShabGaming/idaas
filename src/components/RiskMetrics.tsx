@@ -1,14 +1,23 @@
-import { Shield, Info } from "lucide-react";
+import { Shield, Info, ChevronDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useState } from "react";
 
 const RiskMetrics = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
   const riskOccupants = [
     { name: "Bar", present: true },
     { name: "Tire Retailer", present: true },
@@ -34,13 +43,26 @@ const RiskMetrics = () => {
 
   return (
     <Card className="shadow-lg animate-fade-in hover:shadow-xl transition-shadow">
-      <CardHeader className="border-b bg-muted/30">
-        <CardTitle className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-primary" />
-          Location Exposure & Risk Information
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-6 space-y-6">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CardHeader className="border-b bg-muted/30">
+          <div className="flex items-center justify-between w-full">
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Location Exposure & Risk Information
+            </CardTitle>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    isOpen ? "transform rotate-180" : ""
+                  }`}
+                />
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </CardHeader>
+        <CollapsibleContent>
+          <CardContent className="pt-6 space-y-6">
         {/* Restaurant Indicator */}
         <div className="flex items-center justify-between p-3 bg-accent/50 rounded-lg">
           <TooltipProvider>
@@ -192,7 +214,9 @@ const RiskMetrics = () => {
             </Tooltip>
           </TooltipProvider>
         </div>
-      </CardContent>
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
     </Card>
   );
 };
