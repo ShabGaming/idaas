@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 
 const AIRiskSummary = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Card className="shadow-lg animate-fade-in hover:shadow-xl transition-shadow border-l-4 border-l-primary">

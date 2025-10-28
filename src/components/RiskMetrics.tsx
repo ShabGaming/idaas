@@ -99,7 +99,7 @@ const RiskMetrics = () => {
           </div>
           <div>
             <label className="text-sm font-medium text-muted-foreground">Neighborhood Risk</label>
-            <Badge variant="secondary" className="mt-1 bg-orange-100 text-orange-800">Medium</Badge>
+            <p className="text-2xl font-bold">Medium</p>
           </div>
         </div>
 

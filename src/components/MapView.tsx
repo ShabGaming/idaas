@@ -39,10 +39,11 @@ const MapView = () => {
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div 
-          className="relative h-[400px] bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden transition-transform duration-300"
-          style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}
-        >
+        <div className="relative h-[400px] bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
+          <div 
+            className="absolute inset-0 transition-transform duration-300"
+            style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'center' }}
+          >
           {/* Simplified map representation */}
           <div className="absolute inset-0 opacity-20">
             <div className="grid grid-cols-4 h-full">
@@ -137,6 +138,7 @@ const MapView = () => {
                 <span>Risk Exposure</span>
               </div>
             )}
+          </div>
           </div>
         </div>
       </CardContent>

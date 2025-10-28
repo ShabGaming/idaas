@@ -7,6 +7,7 @@ import MapView from "@/components/MapView";
 import AIRiskSummary from "@/components/AIRiskSummary";
 import RiskMetrics from "@/components/RiskMetrics";
 import AIAssistant from "@/components/AIAssistant";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
@@ -38,6 +39,9 @@ const Index = () => {
           
           {/* AI Assistant */}
           <AIAssistant />
+          
+          {/* Footer */}
+          <Footer />
         </div>
       </div>
     </SidebarProvider>

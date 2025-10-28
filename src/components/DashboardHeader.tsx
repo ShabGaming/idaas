@@ -1,6 +1,5 @@
 import { Download, Globe, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,10 +24,6 @@ const DashboardHeader = () => {
     <header className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-3">
-          <SidebarTrigger className="text-foreground" />
-          <div className="hidden sm:block">
-            <h1 className="text-xl font-bold text-primary">Risk Intelligence Dashboard</h1>
-          </div>
         </div>
 
         <div className="flex items-center gap-3">

@@ -1,4 +1,4 @@
-import { Home, Search, Star, Building2 } from "lucide-react";
+import { Home, Search, Star } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  useSidebar,
 } from "@/components/ui/sidebar";
 
 const menuItems = [
@@ -20,20 +19,18 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
-
   return (
-    <Sidebar collapsible="icon" className="border-r border-border">
-      <SidebarHeader className="border-b border-border p-4">
+    <Sidebar className="border-r border-border">
+      <SidebarHeader className="border-b border-border px-6 py-4">
         <div className="flex items-center gap-2">
-          <Building2 className="h-6 w-6 text-primary shrink-0" />
-          {!isCollapsed && (
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold">Intact Financial</span>
-              <span className="text-xs text-muted-foreground">DAAS Platform</span>
-            </div>
-          )}
+          <img 
+            src="/logo.png" 
+            alt="Intact Insurance" 
+            className="h-6 w-auto shrink-0"
+          />
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">DAAS Platform</span>
+          </div>
         </div>
       </SidebarHeader>
 
@@ -44,7 +41,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={isCollapsed ? item.title : undefined}>
+                  <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
                       end
@@ -55,7 +52,7 @@ export function AppSidebar() {
                       }
                     >
                       <item.icon className="h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

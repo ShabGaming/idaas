@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Hi! I'm your Intact Risk Intelligence Assistant. Ask me anything about this property or risk assessment." }
+    { role: "assistant", content: "Hi! I'm your Intact DAAS Assistant. Ask me anything about this property or risk assessment." }
   ]);
   const [inputValue, setInputValue] = useState("");
 
