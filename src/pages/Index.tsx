@@ -3,8 +3,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import DashboardHeader from "@/components/DashboardHeader";
 import SearchBar from "@/components/SearchBar";
 import BusinessInfoCard from "@/components/BusinessInfoCard";
-import MapView from "@/components/MapView";
-import AIRiskSummary from "@/components/AIRiskSummary";
+import BusinessSummary from "@/components/BusinessSummary";
 import RiskMetrics from "@/components/RiskMetrics";
 import AIAssistant from "@/components/AIAssistant";
 import Footer from "@/components/Footer";
@@ -23,14 +22,11 @@ const Index = () => {
               {/* Search Section */}
               <SearchBar />
               
-              {/* Business Information & Map - Combined Panel */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <BusinessInfoCard />
-                <MapView />
-              </div>
+              {/* Business Information with embedded Map */}
+              <BusinessInfoCard />
               
-              {/* AI Risk Summary - Collapsible */}
-              <AIRiskSummary />
+              {/* Business Summary - Collapsible */}
+              <BusinessSummary />
               
               {/* Location Exposure & Risk Information */}
               <RiskMetrics />
