@@ -12,7 +12,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 
-const BusinessSummary = () => {
+type Props = { lang?: "EN" | "FR" };
+
+const BusinessSummary = ({ lang = "EN" }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   type Review = {
@@ -92,14 +94,14 @@ const BusinessSummary = () => {
           <div className="flex items-center justify-between w-full">
             <CardTitle className="flex items-center gap-2">
               <Building className="h-5 w-5 text-primary" />
-              Business Overview
+              {lang === "FR" ? "Aperçu de l’entreprise" : "Business Overview"}
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Summary for business information powered by AI</p>
+                    <p>{lang === "FR" ? "Résumé des informations sur l’entreprise propulsé par l’IA" : "Summary for business information powered by AI"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -119,26 +121,26 @@ const BusinessSummary = () => {
         <CollapsibleContent>
           <CardContent className="pt-6 space-y-6">
             <section>
-              <h4 className="font-semibold text-foreground mb-2">Description</h4>
+              <h4 className="font-semibold text-foreground mb-2">{lang === "FR" ? "Description" : "Description"}</h4>
               <p className="text-muted-foreground leading-relaxed">
-                Evergreen Bistro is a modern neighborhood restaurant known for seasonal menus and
-                locally sourced ingredients. The venue offers a relaxed dining experience with a
-                focus on sustainability and community engagement.
+                {lang === "FR"
+                  ? "Evergreen Bistro est un restaurant de quartier moderne connu pour ses menus saisonniers et ses ingrédients locaux. Le lieu offre une expérience décontractée axée sur la durabilité et l’engagement communautaire."
+                  : "Evergreen Bistro is a modern neighborhood restaurant known for seasonal menus and locally sourced ingredients. The venue offers a relaxed dining experience with a focus on sustainability and community engagement."}
               </p>
             </section>
 
             <section>
               <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                <MapPin className="h-4 w-4" /> Location
+                <MapPin className="h-4 w-4" /> {lang === "FR" ? "Emplacement" : "Location"}
               </h4>
               <div className="text-sm text-muted-foreground">
                 <p className="text-base text-foreground">123 Queen St W, Toronto, ON M5H 2M9</p>
-                <p>Located in Queen Plaza with strong walkability and transit access.</p>
+                <p>{lang === "FR" ? "Situé dans Queen Plaza avec une excellente accessibilité piétonne et aux transports." : "Located in Queen Plaza with strong walkability and transit access."}</p>
               </div>
             </section>
 
             <section>
-              <h4 className="font-semibold text-foreground mb-3">Street View</h4>
+              <h4 className="font-semibold text-foreground mb-3">{lang === "FR" ? "Vue de rue" : "Street View"}</h4>
               <div className="relative">
                 <Carousel className="w-full">
                   <CarouselContent>

@@ -5,7 +5,9 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
-const BusinessInfoCard = () => {
+type Props = { lang?: "EN" | "FR" };
+
+const BusinessInfoCard = ({ lang = "EN" }: Props) => {
   const [showRiskLocations, setShowRiskLocations] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
 
@@ -25,18 +27,18 @@ const BusinessInfoCard = () => {
           {/* Left: Business details */}
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">Business Name</label>
+              <label className="text-sm font-medium text-muted-foreground">{lang === "FR" ? "Nom de l’entreprise" : "Business Name"}</label>
               <p className="text-xl font-semibold text-foreground">Evergreen Bistro</p>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Category</label>
-                <p className="text-lg font-medium">Restaurant</p>
+                <label className="text-sm font-medium text-muted-foreground">{lang === "FR" ? "Catégorie" : "Category"}</label>
+                <p className="text-lg font-medium">{lang === "FR" ? "Restaurant" : "Restaurant"}</p>
               </div>
               
               <div>
-                <label className="text-sm font-medium text-muted-foreground">Rating</label>
+                <label className="text-sm font-medium text-muted-foreground">{lang === "FR" ? "Note" : "Rating"}</label>
                 <div className="flex items-center gap-2">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                   <span className="text-lg font-medium">4.5</span>
@@ -46,14 +48,14 @@ const BusinessInfoCard = () => {
             </div>
             
             <div>
-              <label className="text-sm font-medium text-muted-foreground">Building</label>
-              <p className="text-lg font-medium">Queen Plaza</p>
+              <label className="text-sm font-medium text-muted-foreground">{lang === "FR" ? "Bâtiment" : "Building"}</label>
+              <p className="text-lg font-medium">{lang === "FR" ? "Queen Plaza" : "Queen Plaza"}</p>
             </div>
             
             <div>
               <label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
-                Location
+                {lang === "FR" ? "Emplacement" : "Location"}
               </label>
               <p className="text-base">123 Queen St W, Toronto, ON M5H 2M9</p>
             </div>
@@ -61,7 +63,7 @@ const BusinessInfoCard = () => {
             <div>
               <label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                 <ExternalLink className="h-4 w-4" />
-                Website
+                {lang === "FR" ? "Site web" : "Website"}
               </label>
               <a 
                 href="https://www.evergreenbistro-demo.com" 
@@ -79,7 +81,7 @@ const BusinessInfoCard = () => {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
-                <span className="font-medium">Location Map</span>
+                <span className="font-medium">{lang === "FR" ? "Carte de l’emplacement" : "Location Map"}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -88,7 +90,7 @@ const BusinessInfoCard = () => {
                   onClick={() => setShowRiskLocations(!showRiskLocations)}
                   className="text-xs transition-all"
                 >
-                  {showRiskLocations ? "Hide" : "Show"} Risk Exposures
+                  {lang === "FR" ? (showRiskLocations ? "Masquer" : "Afficher") + " les expositions aux risques" : `${showRiskLocations ? "Hide" : "Show"} Risk Exposures`}
                 </Button>
                 <div className="flex gap-1">
                   <Button variant="outline" size="icon" className="h-7 w-7" onClick={handleZoomOut}>

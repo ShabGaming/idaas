@@ -80,7 +80,7 @@ const FeedbackPanel = ({ isOpen, onClose }: FeedbackPanelProps) => {
             <Input
               id="email"
               type="email"
-              placeholder="your.email@example.com"
+              placeholder="your.email@intact.net"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

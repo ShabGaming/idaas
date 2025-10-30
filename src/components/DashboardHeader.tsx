@@ -8,15 +8,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 
-const DashboardHeader = () => {
-  const [language, setLanguage] = useState<"EN" | "FR">("EN");
+type Props = {
+  language?: "EN" | "FR";
+  onChangeLanguage?: (lang: "EN" | "FR") => void;
+};
+
+const DashboardHeader = ({ language: controlledLanguage, onChangeLanguage }: Props) => {
+  const [uncontrolledLanguage, setUncontrolledLanguage] = useState<"EN" | "FR">("EN");
+  const language = controlledLanguage ?? uncontrolledLanguage;
 
   const handleDownloadReport = () => {
     console.log("Downloading report...");
   };
 
   const toggleLanguage = (lang: "EN" | "FR") => {
-    setLanguage(lang);
+    if (onChangeLanguage) {
+      onChangeLanguage(lang);
+    } else {
+      setUncontrolledLanguage(lang);
+    }
     console.log(`Language changed to ${lang}`);
   };
 
