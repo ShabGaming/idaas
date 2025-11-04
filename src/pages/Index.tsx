@@ -11,13 +11,19 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   const [language, setLanguage] = useState<"EN" | "FR">("EN");
+  const [devMode, setDevMode] = useState(false);
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         
         <div className="flex-1 flex flex-col">
-          <DashboardHeader language={language} onChangeLanguage={setLanguage} />
+          <DashboardHeader 
+            language={language} 
+            onChangeLanguage={setLanguage}
+            devMode={devMode}
+            onDevModeChange={setDevMode}
+          />
           
           <main className="flex-1 container mx-auto px-6 py-8">
             <div className="space-y-6">
@@ -31,7 +37,7 @@ const Index = () => {
               <BusinessSummary lang={language === "FR" ? "FR" : "EN"} />
               
               {/* Location Exposure & Risk Information */}
-              <RiskMetrics />
+              <RiskMetrics devMode={devMode} />
             </div>
           </main>
           

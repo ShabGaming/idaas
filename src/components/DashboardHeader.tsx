@@ -6,16 +6,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
 type Props = {
   language?: "EN" | "FR";
   onChangeLanguage?: (lang: "EN" | "FR") => void;
+  devMode?: boolean;
+  onDevModeChange?: (enabled: boolean) => void;
 };
 
-const DashboardHeader = ({ language: controlledLanguage, onChangeLanguage }: Props) => {
+const DashboardHeader = ({ 
+  language: controlledLanguage, 
+  onChangeLanguage,
+  devMode: controlledDevMode,
+  onDevModeChange
+}: Props) => {
   const [uncontrolledLanguage, setUncontrolledLanguage] = useState<"EN" | "FR">("EN");
+  const [uncontrolledDevMode, setUncontrolledDevMode] = useState(false);
   const language = controlledLanguage ?? uncontrolledLanguage;
+  const devMode = controlledDevMode ?? uncontrolledDevMode;
 
   const handleDownloadReport = () => {
     console.log("Downloading report...");
@@ -54,6 +65,24 @@ const DashboardHeader = ({ language: controlledLanguage, onChangeLanguage }: Pro
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Dev Mode Toggle */}
+          <div className="flex items-center gap-2 px-2">
+            <Label htmlFor="dev-mode" className="text-sm cursor-pointer">
+              Dev Mode
+            </Label>
+            <Switch
+              id="dev-mode"
+              checked={devMode}
+              onCheckedChange={(checked) => {
+                if (onDevModeChange) {
+                  onDevModeChange(checked);
+                } else {
+                  setUncontrolledDevMode(checked);
+                }
+              }}
+            />
+          </div>
 
           {/* User Profile */}
           <DropdownMenu>
