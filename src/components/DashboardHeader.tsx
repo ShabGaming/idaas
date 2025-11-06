@@ -66,10 +66,10 @@ const DashboardHeader = ({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Dev Mode Toggle */}
+          {/* Advanced Mode Toggle */}
           <div className="flex items-center gap-2 px-2">
             <Label htmlFor="dev-mode" className="text-sm cursor-pointer">
-              Dev Mode
+              Advance Mode
             </Label>
             <Switch
               id="dev-mode"

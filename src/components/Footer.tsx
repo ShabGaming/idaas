@@ -9,11 +9,7 @@ const Footer = () => {
   return (
     <>
       <footer className="border-t border-border bg-muted/30 px-6 py-4">
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-4">
-            <span>DAAS Platform v1.0</span>
-          </div>
-          
+        <div className="flex items-center justify-center text-sm text-muted-foreground">
           <Button
             variant="ghost"
             size="sm"
@@ -21,7 +17,7 @@ const Footer = () => {
             className="text-muted-foreground hover:text-foreground gap-2"
           >
             <MessageSquare className="h-4 w-4" />
-            Provide Feedback
+            DAAS Platform Mockup - Provide Feedback
           </Button>
         </div>
       </footer>

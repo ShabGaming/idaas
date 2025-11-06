@@ -1,4 +1,4 @@
-import { Shield, Info, ChevronDown } from "lucide-react";
+import { Shield, Info, ChevronDown, Lock, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useState, useRef, useEffect } from "react";
 
 type Metadata = {
   source: "firehalls_db" | "building_db" | "exposure_db";
@@ -24,9 +35,33 @@ type RiskMetricsProps = {
   devMode?: boolean;
 };
 
+// Permission configuration - user has access to firehalls_db and building_db, but not exposure_db
+const USER_PERMISSIONS: Record<"firehalls_db" | "building_db" | "exposure_db", boolean> = {
+  firehalls_db: true,
+  building_db: true,
+  exposure_db: false,
+};
+
 const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
+  const [requestAccessDialogOpen, setRequestAccessDialogOpen] = useState(false);
+  const [accessDocDialogOpen, setAccessDocDialogOpen] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<"firehalls_db" | "building_db" | "exposure_db" | null>(null);
+  const [requestEmail, setRequestEmail] = useState("");
+  const [requestReason, setRequestReason] = useState("");
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [businessListDialogOpen, setBusinessListDialogOpen] = useState(false);
+  const [selectedOccupantType, setSelectedOccupantType] = useState<string | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const riskOccupants = [
     { name: "Bar", present: true },
@@ -41,6 +76,22 @@ const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
     { name: "Tattoo Parlor", present: false },
   ];
 
+  // Mock business data for Risk Occupants
+  const getBusinessesForOccupant = (occupantType: string) => {
+    const businessMap: Record<string, string[]> = {
+      "Bar": ["The Corner Pub", "Downtown Sports Bar"],
+      "Tire Retailer": ["Quick Tire & Auto"],
+    };
+    return businessMap[occupantType] || [];
+  };
+
+  const handleOccupantClick = (occupantName: string, isPresent: boolean) => {
+    if (isPresent) {
+      setSelectedOccupantType(occupantName);
+      setBusinessListDialogOpen(true);
+    }
+  };
+
   const buildingInfo = [
     { label: "Year Built", value: "1978", tooltip: "Original construction year", metadata: { source: "building_db" as const, dataType: "integer" } },
     { label: "Total Area", value: "12,500 sq ft", tooltip: "Total building square footage", metadata: { source: "building_db" as const, dataType: "string" } },
@@ -50,6 +101,118 @@ const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
     { label: "Heating Update", value: "2016", tooltip: "Last HVAC system upgrade", metadata: { source: "building_db" as const, dataType: "integer" } },
     { label: "Plumbing Update", value: "2012", tooltip: "Last plumbing system upgrade", metadata: { source: "building_db" as const, dataType: "integer" } },
   ];
+
+  const hasAccess = (source: Metadata["source"]) => {
+    return USER_PERMISSIONS[source];
+  };
+
+  const handlePermissionClick = (source: Metadata["source"]) => {
+    setSelectedSource(source);
+    if (hasAccess(source)) {
+      setAccessDocDialogOpen(true);
+    } else {
+      setRequestAccessDialogOpen(true);
+    }
+  };
+
+  const handleRequestAccess = () => {
+    // In a real app, this would send the request to a backend
+    console.log("Requesting access:", {
+      source: selectedSource,
+      email: requestEmail,
+      reason: requestReason,
+    });
+    setRequestAccessDialogOpen(false);
+    setRequestEmail("");
+    setRequestReason("");
+    setSelectedSource(null);
+  };
+
+  const getOpenSearchCode = (source: Metadata["source"]) => {
+    const sourceMap: Record<string, { index: string; example: string }> = {
+      firehalls_db: {
+        index: "firehalls_db",
+        example: `GET /firehalls_db/_search
+{
+  "query": {
+    "match": {
+      "location": "your-location-id"
+    }
+  }
+}`,
+      },
+      building_db: {
+        index: "building_db",
+        example: `GET /building_db/_search
+{
+  "query": {
+    "match": {
+      "building_id": "your-building-id"
+    }
+  }
+}`,
+      },
+      exposure_db: {
+        index: "exposure_db",
+        example: `GET /exposure_db/_search
+{
+  "query": {
+    "match": {
+      "property_id": "your-property-id"
+    }
+  }
+}`,
+      },
+    };
+
+    return sourceMap[source] || sourceMap.exposure_db;
+  };
+
+  const renderPermissionIndicator = (source: Metadata["source"]) => {
+    if (!devMode) return null;
+
+    const access = hasAccess(source);
+    return (
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          handlePermissionClick(source);
+        }}
+        className={`ml-2 px-2 py-1 text-xs font-medium rounded-md transition-colors flex items-center gap-1 ${
+          access
+            ? "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
+            : "bg-red-100 text-red-700 hover:bg-red-200 border border-red-300"
+        }`}
+        type="button"
+      >
+        {access ? (
+          <>
+            <CheckCircle2 className="h-3 w-3" />
+            Access
+          </>
+        ) : (
+          <>
+            <Lock className="h-3 w-3" />
+            Request Access
+          </>
+        )}
+      </button>
+    );
+  };
+
+  const handleMouseEnter = (fieldId: string) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setHoveredField(fieldId);
+  };
+
+  const handleMouseLeave = () => {
+    // Add a small delay before hiding to allow moving cursor to tooltip
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredField(null);
+    }, 100);
+  };
 
   const renderFieldWithMetadata = (
     fieldId: string,
@@ -63,16 +226,16 @@ const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
       return (
         <div
           className={`relative ${className || "cursor-help"}`}
-          onMouseEnter={() => setHoveredField(fieldId)}
-          onMouseLeave={() => setHoveredField(null)}
+          onMouseEnter={() => handleMouseEnter(fieldId)}
+          onMouseLeave={handleMouseLeave}
         >
           {value}
           {hoveredField === fieldId && (
             <div
               className="absolute z-50 w-64 p-3 mb-2 bg-popover border border-border rounded-md shadow-lg text-popover-foreground pointer-events-auto"
               style={{ bottom: "100%", left: "50%", transform: "translateX(-50%)", marginBottom: "4px" }}
-              onMouseEnter={() => setHoveredField(fieldId)}
-              onMouseLeave={() => setHoveredField(null)}
+              onMouseEnter={() => handleMouseEnter(fieldId)}
+              onMouseLeave={handleMouseLeave}
             >
               <div className="space-y-2">
                 {tooltipText && (
@@ -83,7 +246,10 @@ const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
                 )}
                 <div>
                   <span className="text-xs font-medium text-muted-foreground">Source:</span>
-                  <p className="text-sm font-semibold">{metadata.source}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-sm font-semibold">{metadata.source}</p>
+                    {renderPermissionIndicator(metadata.source)}
+                  </div>
                 </div>
                 <div>
                   <span className="text-xs font-medium text-muted-foreground">Data Type:</span>
@@ -168,24 +334,68 @@ const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
             </TooltipProvider>
           </h4>
           <div className="grid grid-cols-2 gap-2">
-            {riskOccupants.map((occupant) => (
-              <div
-                key={occupant.name}
-                className={`flex items-center justify-between p-2 rounded ${
-                  occupant.present ? "bg-red-50 border border-red-200" : "bg-muted/30"
-                }`}
-              >
-                <span className="text-sm">{occupant.name}</span>
-                {renderFieldWithMetadata(
-                  `risk-occupant-${occupant.name.toLowerCase().replace(/\s+/g, "-")}`,
-                  occupant.name,
-                  <Badge variant={occupant.present ? "destructive" : "secondary"} className="text-xs">
-                    {occupant.present ? "Yes" : "No"}
-                  </Badge>,
-                  { source: "exposure_db", dataType: "boolean" }
-                )}
-              </div>
-            ))}
+            {riskOccupants.map((occupant) => {
+              const fieldId = `risk-occupant-${occupant.name.toLowerCase().replace(/\s+/g, "-")}`;
+              return (
+                <div
+                  key={occupant.name}
+                  className={`flex items-center justify-between p-2 rounded ${
+                    occupant.present ? "bg-red-50 border border-red-200" : "bg-muted/30"
+                  } ${devMode ? "cursor-help" : ""}`}
+                  onMouseEnter={devMode ? () => handleMouseEnter(fieldId) : undefined}
+                  onMouseLeave={devMode ? handleMouseLeave : undefined}
+                >
+                  <span className="text-sm">{occupant.name}</span>
+                  {devMode ? (
+                    <div className="relative">
+                      <Badge 
+                        variant={occupant.present ? "destructive" : "secondary"} 
+                        className={`text-xs ${occupant.present ? "cursor-pointer hover:bg-destructive/90" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOccupantClick(occupant.name, occupant.present);
+                        }}
+                      >
+                        {occupant.present ? "Yes" : "No"}
+                      </Badge>
+                      {hoveredField === fieldId && (
+                        <div
+                          className="absolute z-50 w-64 p-3 mb-2 bg-popover border border-border rounded-md shadow-lg text-popover-foreground pointer-events-auto"
+                          style={{ bottom: "100%", right: "0", marginBottom: "4px" }}
+                          onMouseEnter={() => handleMouseEnter(fieldId)}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          <div className="space-y-2">
+                            <div>
+                              <span className="text-xs font-medium text-muted-foreground">Source:</span>
+                              <div className="flex items-center gap-2 mt-1">
+                                <p className="text-sm font-semibold">exposure_db</p>
+                                {renderPermissionIndicator("exposure_db")}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="text-xs font-medium text-muted-foreground">Data Type:</span>
+                              <p className="text-sm font-semibold">boolean</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Badge 
+                      variant={occupant.present ? "destructive" : "secondary"} 
+                      className={`text-xs ${occupant.present ? "cursor-pointer hover:bg-destructive/90" : ""}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOccupantClick(occupant.name, occupant.present);
+                      }}
+                    >
+                      {occupant.present ? "Yes" : "No"}
+                    </Badge>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -375,6 +585,121 @@ const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
           </CardContent>
         </CollapsibleContent>
       </Collapsible>
+
+      {/* Request Access Dialog */}
+      <Dialog open={requestAccessDialogOpen} onOpenChange={setRequestAccessDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Request Access</DialogTitle>
+            <DialogDescription>
+              Request access to {selectedSource} database. Please provide your inact.net email and reason for access.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email (inact.net)</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="your.name@inact.net"
+                value={requestEmail}
+                onChange={(e) => setRequestEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reason">Reason for Access</Label>
+              <Textarea
+                id="reason"
+                placeholder="Please provide a reason for requesting access to this database..."
+                value={requestReason}
+                onChange={(e) => setRequestReason(e.target.value)}
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRequestAccessDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRequestAccess}
+              disabled={!requestEmail || !requestReason || !requestEmail.includes("@inact.net")}
+            >
+              Submit Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Access Documentation Dialog */}
+      <Dialog open={accessDocDialogOpen} onOpenChange={setAccessDocDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Access Documentation</DialogTitle>
+            <DialogDescription>
+              How to access {selectedSource} via OpenSearch API
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>OpenSearch API Example</Label>
+              <div className="bg-muted p-4 rounded-md border">
+                <pre className="text-sm overflow-x-auto">
+                  <code>{selectedSource && getOpenSearchCode(selectedSource).example}</code>
+                </pre>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Index Name</Label>
+              <div className="bg-muted p-3 rounded-md border">
+                <code className="text-sm">{selectedSource && getOpenSearchCode(selectedSource).index}</code>
+              </div>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              <p>
+                <strong>Note:</strong> You need to authenticate using your API credentials. 
+                Replace the placeholder values with your actual query parameters.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setAccessDocDialogOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Business List Dialog */}
+      <Dialog open={businessListDialogOpen} onOpenChange={setBusinessListDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Businesses - {selectedOccupantType}</DialogTitle>
+            <DialogDescription>
+              List of businesses in this building for {selectedOccupantType}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {selectedOccupantType && getBusinessesForOccupant(selectedOccupantType).length > 0 ? (
+              <div className="space-y-2">
+                {getBusinessesForOccupant(selectedOccupantType).map((business, index) => (
+                  <div
+                    key={index}
+                    className="p-3 bg-muted/50 rounded-md border border-border hover:bg-muted transition-colors"
+                  >
+                    <p className="text-sm font-medium">{business}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 text-center text-muted-foreground">
+                <p className="text-sm">No businesses found for this occupant type.</p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setBusinessListDialogOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
