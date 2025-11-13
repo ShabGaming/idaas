@@ -27,8 +27,8 @@ export function PrefillDatasetDialog({ open, onOpenChange, databases }: PrefillD
   const [submitted, setSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Get databases with access (tableCount > 0)
-  const databasesWithAccess = databases.filter((db) => db.tableCount > 0);
+  // Get databases with access (rowCount > 0)
+  const databasesWithAccess = databases.filter((db) => db.rowCount > 0);
 
   const acceptedFileTypes = [".feather", ".csv", ".xlsx", ".xls"];
   const acceptedMimeTypes = [

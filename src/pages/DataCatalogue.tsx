@@ -1,18 +1,35 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import DashboardHeader from "@/components/DashboardHeader";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Footer from "@/components/Footer";
 import { DataCatalogueBrowser } from "@/components/DataCatalogueBrowser";
 import { DatabaseMetadataPanel } from "@/components/DatabaseMetadataPanel";
 import { Database, Schema, Table, databases } from "@/lib/mockDataCatalogue";
 
 const DataCatalogue = () => {
+  const [searchParams] = useSearchParams();
   const [language, setLanguage] = useState<"EN" | "FR">("EN");
   const [devMode, setDevMode] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Database | Schema | Table | null>(null);
   const [selectedType, setSelectedType] = useState<"database" | "schema" | "table" | null>(null);
   const [selectedDbName, setSelectedDbName] = useState<string | undefined>(undefined);
+  const [initialDatabase, setInitialDatabase] = useState<string | null>(null);
+
+  // Handle query parameter for initial database selection
+  useEffect(() => {
+    const dbParam = searchParams.get("db");
+    if (dbParam) {
+      const db = databases.find((d) => d.name === dbParam);
+      if (db) {
+        setInitialDatabase(dbParam);
+        setSelectedItem(db);
+        setSelectedType("database");
+        setSelectedDbName(undefined);
+      }
+    }
+  }, [searchParams]);
 
   const handleSelect = (
     item: Database | Schema | Table,
@@ -49,6 +66,7 @@ const DataCatalogue = () => {
               <DataCatalogueBrowser 
                 databases={databases} 
                 onSelect={handleSelect}
+                initialDatabase={initialDatabase}
               />
             </div>
 

@@ -2,6 +2,7 @@ import { Shield, Info, ChevronDown, Lock, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Collapsible,
   CollapsibleContent,
@@ -43,6 +44,7 @@ const USER_PERMISSIONS: Record<"firehalls_db" | "building_db" | "exposure_db", b
 };
 
 const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
   const [requestAccessDialogOpen, setRequestAccessDialogOpen] = useState(false);
@@ -247,7 +249,16 @@ const RiskMetrics = ({ devMode = false }: RiskMetricsProps) => {
                 <div>
                   <span className="text-xs font-medium text-muted-foreground">Source:</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <p className="text-sm font-semibold">{metadata.source}</p>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate(`/data-catalogue?db=${metadata.source}`);
+                      }}
+                      className="text-sm font-semibold text-primary hover:underline cursor-pointer"
+                    >
+                      {metadata.source}
+                    </button>
                     {renderPermissionIndicator(metadata.source)}
                   </div>
                 </div>

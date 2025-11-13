@@ -328,6 +328,230 @@ const exposureStats = calculateDatabaseStats(exposureDbSchemas);
 const buildingStats = calculateDatabaseStats(buildingDbSchemas);
 const firehallsStats = calculateDatabaseStats(firehallsDbSchemas);
 
+// Mock data for claims_db
+const claimsDbSchemas: Schema[] = [
+  {
+    name: "core",
+    tables: [
+      {
+        name: "claims",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "claims_team",
+        description: "Insurance claims records including claim details, status, and processing information",
+        columns: [
+          { name: "claim_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "policy_number", type: "VARCHAR(50)", nullable: false, description: "Associated policy number" },
+          { name: "claim_number", type: "VARCHAR(50)", nullable: false, description: "Unique claim identifier" },
+          { name: "claim_type", type: "VARCHAR(50)", nullable: false, description: "Type of claim (auto, property, liability, etc.)" },
+          { name: "incident_date", type: "DATE", nullable: false, description: "Date of the incident" },
+          { name: "report_date", type: "DATE", nullable: false, description: "Date claim was reported" },
+          { name: "claim_status", type: "VARCHAR(50)", nullable: false, description: "Current status (open, closed, pending, denied)" },
+          { name: "claim_amount", type: "DECIMAL(15,2)", nullable: true, description: "Total claim amount" },
+          { name: "paid_amount", type: "DECIMAL(15,2)", nullable: true, description: "Amount paid to date" },
+          { name: "adjuster_id", type: "VARCHAR(50)", nullable: true, description: "Assigned adjuster identifier" },
+          { name: "description", type: "TEXT", nullable: true, description: "Detailed claim description" },
+          { name: "created_at", type: "TIMESTAMP", nullable: false, description: "Record creation timestamp" },
+          { name: "updated_at", type: "TIMESTAMP", nullable: false, description: "Last update timestamp" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/claims_db/core/claims",
+      },
+      {
+        name: "claim_documents",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "claims_team",
+        description: "Documents and attachments associated with claims",
+        columns: [
+          { name: "document_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "claim_id", type: "BIGINT", nullable: false, description: "Foreign key to claims table" },
+          { name: "document_type", type: "VARCHAR(50)", nullable: false, description: "Type of document (photo, report, invoice, etc.)" },
+          { name: "file_name", type: "VARCHAR(255)", nullable: false, description: "Original file name" },
+          { name: "file_path", type: "VARCHAR(500)", nullable: false, description: "Storage path for the document" },
+          { name: "file_size", type: "BIGINT", nullable: false, description: "File size in bytes" },
+          { name: "uploaded_by", type: "VARCHAR(100)", nullable: false, description: "User who uploaded the document" },
+          { name: "uploaded_at", type: "TIMESTAMP", nullable: false, description: "Upload timestamp" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/claims_db/core/claim_documents",
+      },
+    ],
+  },
+];
+
+// Mock data for policies_db
+const policiesDbSchemas: Schema[] = [
+  {
+    name: "core",
+    tables: [
+      {
+        name: "policies",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "underwriting",
+        description: "Insurance policy records with coverage details and terms",
+        columns: [
+          { name: "policy_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "policy_number", type: "VARCHAR(50)", nullable: false, description: "Unique policy number" },
+          { name: "policy_type", type: "VARCHAR(50)", nullable: false, description: "Type of policy (auto, home, commercial, etc.)" },
+          { name: "customer_id", type: "VARCHAR(50)", nullable: false, description: "Customer identifier" },
+          { name: "effective_date", type: "DATE", nullable: false, description: "Policy effective start date" },
+          { name: "expiration_date", type: "DATE", nullable: false, description: "Policy expiration date" },
+          { name: "premium_amount", type: "DECIMAL(15,2)", nullable: false, description: "Annual premium amount" },
+          { name: "coverage_limit", type: "DECIMAL(15,2)", nullable: true, description: "Maximum coverage limit" },
+          { name: "deductible", type: "DECIMAL(15,2)", nullable: true, description: "Policy deductible amount" },
+          { name: "status", type: "VARCHAR(50)", nullable: false, description: "Policy status (active, expired, cancelled, pending)" },
+          { name: "underwriter_id", type: "VARCHAR(50)", nullable: true, description: "Assigned underwriter identifier" },
+          { name: "created_at", type: "TIMESTAMP", nullable: false, description: "Record creation timestamp" },
+          { name: "updated_at", type: "TIMESTAMP", nullable: false, description: "Last update timestamp" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/policies_db/core/policies",
+      },
+      {
+        name: "policy_coverage",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "underwriting",
+        description: "Detailed coverage information for each policy",
+        columns: [
+          { name: "coverage_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "policy_id", type: "BIGINT", nullable: false, description: "Foreign key to policies table" },
+          { name: "coverage_type", type: "VARCHAR(50)", nullable: false, description: "Type of coverage (liability, collision, comprehensive, etc.)" },
+          { name: "coverage_amount", type: "DECIMAL(15,2)", nullable: false, description: "Coverage amount for this type" },
+          { name: "is_optional", type: "BOOLEAN", nullable: false, description: "Whether this coverage is optional" },
+          { name: "description", type: "TEXT", nullable: true, description: "Coverage description" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/policies_db/core/policy_coverage",
+      },
+    ],
+  },
+];
+
+// Mock data for analytics_db
+const analyticsDbSchemas: Schema[] = [
+  {
+    name: "core",
+    tables: [
+      {
+        name: "analytics_dashboards",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "analytics_team",
+        description: "Analytics dashboard configurations and metadata",
+        columns: [
+          { name: "dashboard_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "dashboard_name", type: "VARCHAR(255)", nullable: false, description: "Dashboard display name" },
+          { name: "dashboard_type", type: "VARCHAR(50)", nullable: false, description: "Type of dashboard (executive, operational, financial, etc.)" },
+          { name: "owner", type: "VARCHAR(100)", nullable: false, description: "Dashboard owner" },
+          { name: "last_refreshed", type: "TIMESTAMP", nullable: true, description: "Last data refresh timestamp" },
+          { name: "refresh_frequency", type: "VARCHAR(50)", nullable: true, description: "Refresh frequency (daily, weekly, monthly)" },
+          { name: "is_active", type: "BOOLEAN", nullable: false, description: "Whether dashboard is active" },
+          { name: "created_at", type: "TIMESTAMP", nullable: false, description: "Creation timestamp" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/analytics_db/core/analytics_dashboards",
+      },
+      {
+        name: "kpi_metrics",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "analytics_team",
+        description: "Key performance indicators and metric definitions",
+        columns: [
+          { name: "metric_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "metric_name", type: "VARCHAR(255)", nullable: false, description: "Metric name" },
+          { name: "metric_category", type: "VARCHAR(50)", nullable: false, description: "Metric category (sales, claims, customer, etc.)" },
+          { name: "metric_value", type: "DECIMAL(15,2)", nullable: true, description: "Current metric value" },
+          { name: "target_value", type: "DECIMAL(15,2)", nullable: true, description: "Target value for the metric" },
+          { name: "calculation_method", type: "VARCHAR(100)", nullable: true, description: "How the metric is calculated" },
+          { name: "last_calculated", type: "TIMESTAMP", nullable: true, description: "Last calculation timestamp" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/analytics_db/core/kpi_metrics",
+      },
+    ],
+  },
+  {
+    name: "reports",
+    tables: [
+      {
+        name: "report_history",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "analytics_team",
+        description: "Historical record of generated reports",
+        columns: [
+          { name: "report_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "report_name", type: "VARCHAR(255)", nullable: false, description: "Report name" },
+          { name: "report_type", type: "VARCHAR(50)", nullable: false, description: "Type of report" },
+          { name: "generated_by", type: "VARCHAR(100)", nullable: false, description: "User who generated the report" },
+          { name: "generated_at", type: "TIMESTAMP", nullable: false, description: "Generation timestamp" },
+          { name: "file_path", type: "VARCHAR(500)", nullable: true, description: "Path to generated report file" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/analytics_db/reports/report_history",
+      },
+    ],
+  },
+];
+
+// Mock data for reports_db
+const reportsDbSchemas: Schema[] = [
+  {
+    name: "core",
+    tables: [
+      {
+        name: "generated_reports",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "reporting_team",
+        description: "Generated report files and metadata",
+        columns: [
+          { name: "report_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "report_name", type: "VARCHAR(255)", nullable: false, description: "Report name" },
+          { name: "report_type", type: "VARCHAR(50)", nullable: false, description: "Report type (monthly, quarterly, annual, ad-hoc)" },
+          { name: "report_format", type: "VARCHAR(20)", nullable: false, description: "File format (PDF, Excel, CSV, etc.)" },
+          { name: "file_path", type: "VARCHAR(500)", nullable: false, description: "Storage path for the report file" },
+          { name: "file_size", type: "BIGINT", nullable: false, description: "File size in bytes" },
+          { name: "generated_by", type: "VARCHAR(100)", nullable: false, description: "User who generated the report" },
+          { name: "generation_date", type: "TIMESTAMP", nullable: false, description: "Report generation timestamp" },
+          { name: "report_period_start", type: "DATE", nullable: true, description: "Start date of report period" },
+          { name: "report_period_end", type: "DATE", nullable: true, description: "End date of report period" },
+          { name: "status", type: "VARCHAR(50)", nullable: false, description: "Report status (generating, completed, failed)" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/reports_db/core/generated_reports",
+      },
+      {
+        name: "report_templates",
+        rowCount: 0,
+        size: "0 B",
+        lastUpdated: "2024-01-01 00:00:00",
+        owner: "reporting_team",
+        description: "Report template definitions and configurations",
+        columns: [
+          { name: "template_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "template_name", type: "VARCHAR(255)", nullable: false, description: "Template name" },
+          { name: "template_type", type: "VARCHAR(50)", nullable: false, description: "Type of template" },
+          { name: "template_config", type: "TEXT", nullable: false, description: "JSON configuration for the template" },
+          { name: "created_by", type: "VARCHAR(100)", nullable: false, description: "User who created the template" },
+          { name: "created_at", type: "TIMESTAMP", nullable: false, description: "Creation timestamp" },
+          { name: "is_active", type: "BOOLEAN", nullable: false, description: "Whether template is active" },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/reports_db/core/report_templates",
+      },
+    ],
+  },
+];
+
+const claimsStats = calculateDatabaseStats(claimsDbSchemas);
+const policiesStats = calculateDatabaseStats(policiesDbSchemas);
+const analyticsStats = calculateDatabaseStats(analyticsDbSchemas);
+const reportsStats = calculateDatabaseStats(reportsDbSchemas);
+
 // Main databases with rich data
 export const databases: Database[] = [
   {
@@ -363,46 +587,46 @@ export const databases: Database[] = [
     schemas: firehallsDbSchemas,
     requiredKeys: ["address"],
   },
-  // Empty placeholder databases
+  // Databases requiring access
   {
     name: "claims_db",
-    tableCount: 0,
-    rowCount: 0,
-    size: "0 B",
-    lastUpdated: "2024-01-01 00:00:00",
+    tableCount: claimsStats.tableCount,
+    rowCount: claimsStats.rowCount,
+    size: claimsStats.size,
+    lastUpdated: "2024-01-15 14:00:00",
     owner: "claims_team",
-    description: "Insurance claims database (empty)",
-    schemas: [],
+    description: "Insurance claims database containing claim records, documents, and processing information for managing insurance claims lifecycle",
+    schemas: claimsDbSchemas,
   },
   {
     name: "policies_db",
-    tableCount: 0,
-    rowCount: 0,
-    size: "0 B",
-    lastUpdated: "2024-01-01 00:00:00",
+    tableCount: policiesStats.tableCount,
+    rowCount: policiesStats.rowCount,
+    size: policiesStats.size,
+    lastUpdated: "2024-01-15 14:30:00",
     owner: "underwriting",
-    description: "Insurance policies database (empty)",
-    schemas: [],
+    description: "Insurance policies database with policy details, coverage information, and terms for all insurance products",
+    schemas: policiesDbSchemas,
   },
   {
     name: "analytics_db",
-    tableCount: 0,
-    rowCount: 0,
-    size: "0 B",
-    lastUpdated: "2024-01-01 00:00:00",
+    tableCount: analyticsStats.tableCount,
+    rowCount: analyticsStats.rowCount,
+    size: analyticsStats.size,
+    lastUpdated: "2024-01-15 15:00:00",
     owner: "analytics_team",
-    description: "Analytics and reporting database (empty)",
-    schemas: [],
+    description: "Analytics and reporting database containing dashboards, KPI metrics, and analytical data for business intelligence",
+    schemas: analyticsDbSchemas,
   },
   {
     name: "reports_db",
-    tableCount: 0,
-    rowCount: 0,
-    size: "0 B",
-    lastUpdated: "2024-01-01 00:00:00",
+    tableCount: reportsStats.tableCount,
+    rowCount: reportsStats.rowCount,
+    size: reportsStats.size,
+    lastUpdated: "2024-01-15 15:30:00",
     owner: "reporting_team",
-    description: "Generated reports database (empty)",
-    schemas: [],
+    description: "Generated reports database storing report files, templates, and metadata for all system-generated reports",
+    schemas: reportsDbSchemas,
   },
 ];
 
