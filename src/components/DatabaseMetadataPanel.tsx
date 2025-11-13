@@ -1,4 +1,4 @@
-import { Database, Schema, Table } from "@/lib/mockDataCatalogue";
+import { Database, Schema, Table, databases } from "@/lib/mockDataCatalogue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -181,7 +181,21 @@ export function DatabaseMetadataPanel({ selectedItem, selectedType, dbName }: Da
       <Separator />
 
       {/* API Endpoint Panel - shown at top for tables */}
-      <ApiEndpointPanel endpoint={table.apiEndpoint} tableName={table.name} />
+      {(() => {
+        // Find the database that contains this table to get required keys
+        const parentDatabase = databases.find((db) => {
+          return db.schemas.some((schema) =>
+            schema.tables.some((t) => t.name === table.name && t.apiEndpoint === table.apiEndpoint)
+          );
+        });
+        return (
+          <ApiEndpointPanel
+            endpoint={table.apiEndpoint}
+            tableName={table.name}
+            requiredKeys={parentDatabase?.requiredKeys}
+          />
+        );
+      })()}
 
       <div className="grid grid-cols-2 gap-4">
         <div>

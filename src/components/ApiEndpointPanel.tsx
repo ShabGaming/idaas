@@ -7,9 +7,10 @@ import { useState } from "react";
 interface ApiEndpointPanelProps {
   endpoint: string;
   tableName: string;
+  requiredKeys?: string[];
 }
 
-export function ApiEndpointPanel({ endpoint, tableName }: ApiEndpointPanelProps) {
+export function ApiEndpointPanel({ endpoint, tableName, requiredKeys }: ApiEndpointPanelProps) {
   const [copied, setCopied] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
@@ -178,6 +179,25 @@ print(data)`;
             </div>
           </TabsContent>
         </Tabs>
+
+        {requiredKeys && requiredKeys.length > 0 && (
+          <div className="text-xs text-muted-foreground pt-2 border-t">
+            <p className="font-medium mb-2">Required Keys:</p>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {requiredKeys.map((key) => (
+                <span
+                  key={key}
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+                >
+                  {key}
+                </span>
+              ))}
+            </div>
+            <p className="text-muted-foreground">
+              Your dataset must include these keys for successful data import.
+            </p>
+          </div>
+        )}
 
         <div className="text-xs text-muted-foreground pt-2 border-t">
           <p className="font-medium mb-1">Authentication:</p>

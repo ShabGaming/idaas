@@ -32,12 +32,13 @@ export interface Database {
   owner: string;
   description: string;
   schemas: Schema[];
+  requiredKeys?: string[];
 }
 
 // Mock data for exposure_db
 const exposureDbSchemas: Schema[] = [
   {
-    name: "public",
+    name: "core",
     tables: [
       {
         name: "property_exposures",
@@ -60,7 +61,7 @@ const exposureDbSchemas: Schema[] = [
           { name: "created_at", type: "TIMESTAMP", nullable: false },
           { name: "updated_at", type: "TIMESTAMP", nullable: false },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/public/property_exposures",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/core/property_exposures",
       },
       {
         name: "risk_assessments",
@@ -79,7 +80,7 @@ const exposureDbSchemas: Schema[] = [
           { name: "assessor", type: "VARCHAR(100)", nullable: true },
           { name: "notes", type: "TEXT", nullable: true },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/public/risk_assessments",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/core/risk_assessments",
       },
       {
         name: "geographic_data",
@@ -97,7 +98,7 @@ const exposureDbSchemas: Schema[] = [
           { name: "flood_zone", type: "VARCHAR(50)", nullable: true },
           { name: "earthquake_zone", type: "VARCHAR(50)", nullable: true },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/public/geographic_data",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/core/geographic_data",
       },
     ],
   },
@@ -128,7 +129,7 @@ const exposureDbSchemas: Schema[] = [
 // Mock data for building_db
 const buildingDbSchemas: Schema[] = [
   {
-    name: "public",
+    name: "core",
     tables: [
       {
         name: "buildings",
@@ -151,7 +152,7 @@ const buildingDbSchemas: Schema[] = [
           { name: "occupancy_type", type: "VARCHAR(50)", nullable: false },
           { name: "fire_safety_rating", type: "VARCHAR(20)", nullable: true },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/public/buildings",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/core/buildings",
       },
       {
         name: "building_inspections",
@@ -170,7 +171,7 @@ const buildingDbSchemas: Schema[] = [
           { name: "findings", type: "TEXT", nullable: true },
           { name: "recommendations", type: "TEXT", nullable: true },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/public/building_inspections",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/core/building_inspections",
       },
       {
         name: "maintenance_records",
@@ -188,7 +189,7 @@ const buildingDbSchemas: Schema[] = [
           { name: "cost", type: "DECIMAL(12,2)", nullable: true },
           { name: "contractor", type: "VARCHAR(100)", nullable: true },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/public/maintenance_records",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/core/maintenance_records",
       },
     ],
   },
@@ -219,7 +220,7 @@ const buildingDbSchemas: Schema[] = [
 // Mock data for firehalls_db
 const firehallsDbSchemas: Schema[] = [
   {
-    name: "public",
+    name: "core",
     tables: [
       {
         name: "fire_stations",
@@ -241,7 +242,7 @@ const firehallsDbSchemas: Schema[] = [
           { name: "phone", type: "VARCHAR(20)", nullable: true },
           { name: "is_active", type: "BOOLEAN", nullable: false },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/public/fire_stations",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/core/fire_stations",
       },
       {
         name: "response_times",
@@ -260,7 +261,7 @@ const firehallsDbSchemas: Schema[] = [
           { name: "response_time_seconds", type: "INTEGER", nullable: true },
           { name: "distance_km", type: "DECIMAL(8,2)", nullable: true },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/public/response_times",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/core/response_times",
       },
       {
         name: "equipment_inventory",
@@ -279,7 +280,7 @@ const firehallsDbSchemas: Schema[] = [
           { name: "last_service_date", type: "DATE", nullable: true },
           { name: "status", type: "VARCHAR(20)", nullable: false },
         ],
-        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/public/equipment_inventory",
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/core/equipment_inventory",
       },
     ],
   },
@@ -338,6 +339,7 @@ export const databases: Database[] = [
     owner: "data_engineering",
     description: "Comprehensive database containing property exposure data, risk assessments, and geographic information for insurance risk analysis",
     schemas: exposureDbSchemas,
+    requiredKeys: ["business_name", "address"],
   },
   {
     name: "building_db",
@@ -348,6 +350,7 @@ export const databases: Database[] = [
     owner: "facilities_management",
     description: "Building inventory database with detailed structural information, inspection records, and maintenance history",
     schemas: buildingDbSchemas,
+    requiredKeys: ["address"],
   },
   {
     name: "firehalls_db",
@@ -358,6 +361,7 @@ export const databases: Database[] = [
     owner: "fire_services",
     description: "Fire station database containing station locations, response times, and equipment inventory",
     schemas: firehallsDbSchemas,
+    requiredKeys: ["address"],
   },
   // Empty placeholder databases
   {

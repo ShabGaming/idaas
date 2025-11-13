@@ -206,23 +206,40 @@ export function PrefillDatasetDialog({ open, onOpenChange, databases }: PrefillD
                   <p className="text-sm text-muted-foreground">No databases with access available</p>
                 ) : (
                   databasesWithAccess.map((db) => (
-                    <div key={db.name} className="flex items-center space-x-3">
-                      <Checkbox
-                        id={`db-${db.name}`}
-                        checked={selectedDatabases.has(db.name)}
-                        onCheckedChange={() => toggleDatabase(db.name)}
-                      />
-                      <Label
-                        htmlFor={`db-${db.name}`}
-                        className="flex-1 cursor-pointer font-normal"
-                      >
-                        <div>
-                          <span className="font-medium">{db.name}</span>
-                          <p className="text-xs text-muted-foreground">
-                            {db.tableCount} {db.tableCount === 1 ? "table" : "tables"} • {db.rowCount.toLocaleString()} rows
-                          </p>
+                    <div key={db.name} className="space-y-2">
+                      <div className="flex items-center space-x-3">
+                        <Checkbox
+                          id={`db-${db.name}`}
+                          checked={selectedDatabases.has(db.name)}
+                          onCheckedChange={() => toggleDatabase(db.name)}
+                        />
+                        <Label
+                          htmlFor={`db-${db.name}`}
+                          className="flex-1 cursor-pointer font-normal"
+                        >
+                          <div>
+                            <span className="font-medium">{db.name}</span>
+                            <p className="text-xs text-muted-foreground">
+                              {db.tableCount} {db.tableCount === 1 ? "table" : "tables"} • {db.rowCount.toLocaleString()} rows
+                            </p>
+                          </div>
+                        </Label>
+                      </div>
+                      {db.requiredKeys && db.requiredKeys.length > 0 && (
+                        <div className="ml-7 pl-1">
+                          <p className="text-xs font-medium text-muted-foreground mb-1">Required keys:</p>
+                          <div className="flex flex-wrap gap-1">
+                            {db.requiredKeys.map((key) => (
+                              <span
+                                key={key}
+                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+                              >
+                                {key}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </Label>
+                      )}
                     </div>
                   ))
                 )}
