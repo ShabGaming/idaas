@@ -1,0 +1,404 @@
+// TypeScript interfaces and mock data for Data Catalogue
+
+export interface Column {
+  name: string;
+  type: string;
+  nullable: boolean;
+  description?: string;
+}
+
+export interface Table {
+  name: string;
+  rowCount: number;
+  size: string;
+  lastUpdated: string;
+  owner: string;
+  description: string;
+  columns: Column[];
+  apiEndpoint: string;
+}
+
+export interface Schema {
+  name: string;
+  tables: Table[];
+}
+
+export interface Database {
+  name: string;
+  tableCount: number;
+  rowCount: number;
+  size: string;
+  lastUpdated: string;
+  owner: string;
+  description: string;
+  schemas: Schema[];
+}
+
+// Mock data for exposure_db
+const exposureDbSchemas: Schema[] = [
+  {
+    name: "public",
+    tables: [
+      {
+        name: "property_exposures",
+        rowCount: 125000,
+        size: "2.4 GB",
+        lastUpdated: "2024-01-15 10:30:00",
+        owner: "data_engineer",
+        description: "Comprehensive property exposure data including building details, location, and risk factors",
+        columns: [
+          { name: "id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "property_id", type: "VARCHAR(50)", nullable: false, description: "Unique property identifier" },
+          { name: "address", type: "VARCHAR(255)", nullable: false },
+          { name: "city", type: "VARCHAR(100)", nullable: false },
+          { name: "province", type: "VARCHAR(50)", nullable: false },
+          { name: "postal_code", type: "VARCHAR(10)", nullable: true },
+          { name: "building_type", type: "VARCHAR(50)", nullable: false },
+          { name: "construction_year", type: "INTEGER", nullable: true },
+          { name: "total_value", type: "DECIMAL(15,2)", nullable: false },
+          { name: "risk_score", type: "DECIMAL(5,2)", nullable: true },
+          { name: "created_at", type: "TIMESTAMP", nullable: false },
+          { name: "updated_at", type: "TIMESTAMP", nullable: false },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/public/property_exposures",
+      },
+      {
+        name: "risk_assessments",
+        rowCount: 89000,
+        size: "1.8 GB",
+        lastUpdated: "2024-01-14 14:20:00",
+        owner: "risk_analyst",
+        description: "Detailed risk assessment records for properties including flood, fire, and earthquake risks",
+        columns: [
+          { name: "assessment_id", type: "BIGINT", nullable: false, description: "Primary key" },
+          { name: "property_id", type: "VARCHAR(50)", nullable: false },
+          { name: "assessment_type", type: "VARCHAR(50)", nullable: false },
+          { name: "risk_level", type: "VARCHAR(20)", nullable: false },
+          { name: "score", type: "DECIMAL(5,2)", nullable: false },
+          { name: "assessment_date", type: "DATE", nullable: false },
+          { name: "assessor", type: "VARCHAR(100)", nullable: true },
+          { name: "notes", type: "TEXT", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/public/risk_assessments",
+      },
+      {
+        name: "geographic_data",
+        rowCount: 45000,
+        size: "950 MB",
+        lastUpdated: "2024-01-13 09:15:00",
+        owner: "data_engineer",
+        description: "Geographic and geospatial data for property locations",
+        columns: [
+          { name: "geo_id", type: "BIGINT", nullable: false },
+          { name: "property_id", type: "VARCHAR(50)", nullable: false },
+          { name: "latitude", type: "DECIMAL(10,8)", nullable: false },
+          { name: "longitude", type: "DECIMAL(11,8)", nullable: false },
+          { name: "elevation", type: "DECIMAL(8,2)", nullable: true },
+          { name: "flood_zone", type: "VARCHAR(50)", nullable: true },
+          { name: "earthquake_zone", type: "VARCHAR(50)", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/public/geographic_data",
+      },
+    ],
+  },
+  {
+    name: "analytics",
+    tables: [
+      {
+        name: "exposure_trends",
+        rowCount: 12000,
+        size: "280 MB",
+        lastUpdated: "2024-01-15 08:00:00",
+        owner: "analytics_team",
+        description: "Aggregated exposure trends and statistics over time",
+        columns: [
+          { name: "trend_id", type: "BIGINT", nullable: false },
+          { name: "region", type: "VARCHAR(100)", nullable: false },
+          { name: "period", type: "DATE", nullable: false },
+          { name: "total_exposure", type: "DECIMAL(15,2)", nullable: false },
+          { name: "property_count", type: "INTEGER", nullable: false },
+          { name: "avg_risk_score", type: "DECIMAL(5,2)", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/exposure_db/analytics/exposure_trends",
+      },
+    ],
+  },
+];
+
+// Mock data for building_db
+const buildingDbSchemas: Schema[] = [
+  {
+    name: "public",
+    tables: [
+      {
+        name: "buildings",
+        rowCount: 98000,
+        size: "3.2 GB",
+        lastUpdated: "2024-01-15 11:45:00",
+        owner: "building_admin",
+        description: "Master building inventory with detailed structural and material information",
+        columns: [
+          { name: "building_id", type: "BIGINT", nullable: false },
+          { name: "building_code", type: "VARCHAR(50)", nullable: false },
+          { name: "name", type: "VARCHAR(255)", nullable: false },
+          { name: "address", type: "VARCHAR(255)", nullable: false },
+          { name: "building_type", type: "VARCHAR(50)", nullable: false },
+          { name: "construction_material", type: "VARCHAR(50)", nullable: false },
+          { name: "stories", type: "INTEGER", nullable: true },
+          { name: "total_area_sqft", type: "DECIMAL(12,2)", nullable: false },
+          { name: "year_built", type: "INTEGER", nullable: true },
+          { name: "year_renovated", type: "INTEGER", nullable: true },
+          { name: "occupancy_type", type: "VARCHAR(50)", nullable: false },
+          { name: "fire_safety_rating", type: "VARCHAR(20)", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/public/buildings",
+      },
+      {
+        name: "building_inspections",
+        rowCount: 156000,
+        size: "2.1 GB",
+        lastUpdated: "2024-01-14 16:30:00",
+        owner: "inspection_team",
+        description: "Historical building inspection records and reports",
+        columns: [
+          { name: "inspection_id", type: "BIGINT", nullable: false },
+          { name: "building_id", type: "BIGINT", nullable: false },
+          { name: "inspection_date", type: "DATE", nullable: false },
+          { name: "inspector_name", type: "VARCHAR(100)", nullable: false },
+          { name: "inspection_type", type: "VARCHAR(50)", nullable: false },
+          { name: "status", type: "VARCHAR(20)", nullable: false },
+          { name: "findings", type: "TEXT", nullable: true },
+          { name: "recommendations", type: "TEXT", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/public/building_inspections",
+      },
+      {
+        name: "maintenance_records",
+        rowCount: 234000,
+        size: "1.9 GB",
+        lastUpdated: "2024-01-15 09:20:00",
+        owner: "facilities_team",
+        description: "Maintenance and repair history for all buildings",
+        columns: [
+          { name: "maintenance_id", type: "BIGINT", nullable: false },
+          { name: "building_id", type: "BIGINT", nullable: false },
+          { name: "maintenance_date", type: "DATE", nullable: false },
+          { name: "maintenance_type", type: "VARCHAR(50)", nullable: false },
+          { name: "description", type: "TEXT", nullable: false },
+          { name: "cost", type: "DECIMAL(12,2)", nullable: true },
+          { name: "contractor", type: "VARCHAR(100)", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/public/maintenance_records",
+      },
+    ],
+  },
+  {
+    name: "structural",
+    tables: [
+      {
+        name: "structural_elements",
+        rowCount: 450000,
+        size: "4.5 GB",
+        lastUpdated: "2024-01-13 12:00:00",
+        owner: "structural_engineer",
+        description: "Detailed structural element inventory including beams, columns, and foundations",
+        columns: [
+          { name: "element_id", type: "BIGINT", nullable: false },
+          { name: "building_id", type: "BIGINT", nullable: false },
+          { name: "element_type", type: "VARCHAR(50)", nullable: false },
+          { name: "material", type: "VARCHAR(50)", nullable: false },
+          { name: "dimensions", type: "VARCHAR(100)", nullable: true },
+          { name: "condition_rating", type: "VARCHAR(20)", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/building_db/structural/structural_elements",
+      },
+    ],
+  },
+];
+
+// Mock data for firehalls_db
+const firehallsDbSchemas: Schema[] = [
+  {
+    name: "public",
+    tables: [
+      {
+        name: "fire_stations",
+        rowCount: 3200,
+        size: "125 MB",
+        lastUpdated: "2024-01-15 13:00:00",
+        owner: "fire_services",
+        description: "Fire station locations, contact information, and operational details",
+        columns: [
+          { name: "station_id", type: "BIGINT", nullable: false },
+          { name: "station_number", type: "VARCHAR(20)", nullable: false },
+          { name: "name", type: "VARCHAR(255)", nullable: false },
+          { name: "address", type: "VARCHAR(255)", nullable: false },
+          { name: "city", type: "VARCHAR(100)", nullable: false },
+          { name: "province", type: "VARCHAR(50)", nullable: false },
+          { name: "postal_code", type: "VARCHAR(10)", nullable: false },
+          { name: "latitude", type: "DECIMAL(10,8)", nullable: false },
+          { name: "longitude", type: "DECIMAL(11,8)", nullable: false },
+          { name: "phone", type: "VARCHAR(20)", nullable: true },
+          { name: "is_active", type: "BOOLEAN", nullable: false },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/public/fire_stations",
+      },
+      {
+        name: "response_times",
+        rowCount: 1250000,
+        size: "2.8 GB",
+        lastUpdated: "2024-01-15 12:30:00",
+        owner: "fire_services",
+        description: "Historical fire response time data by station and incident type",
+        columns: [
+          { name: "response_id", type: "BIGINT", nullable: false },
+          { name: "station_id", type: "BIGINT", nullable: false },
+          { name: "incident_id", type: "VARCHAR(50)", nullable: false },
+          { name: "incident_type", type: "VARCHAR(50)", nullable: false },
+          { name: "dispatch_time", type: "TIMESTAMP", nullable: false },
+          { name: "arrival_time", type: "TIMESTAMP", nullable: true },
+          { name: "response_time_seconds", type: "INTEGER", nullable: true },
+          { name: "distance_km", type: "DECIMAL(8,2)", nullable: true },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/public/response_times",
+      },
+      {
+        name: "equipment_inventory",
+        rowCount: 8500,
+        size: "95 MB",
+        lastUpdated: "2024-01-14 10:00:00",
+        owner: "equipment_manager",
+        description: "Fire station equipment inventory including vehicles, tools, and apparatus",
+        columns: [
+          { name: "equipment_id", type: "BIGINT", nullable: false },
+          { name: "station_id", type: "BIGINT", nullable: false },
+          { name: "equipment_type", type: "VARCHAR(50)", nullable: false },
+          { name: "equipment_name", type: "VARCHAR(255)", nullable: false },
+          { name: "serial_number", type: "VARCHAR(100)", nullable: true },
+          { name: "purchase_date", type: "DATE", nullable: true },
+          { name: "last_service_date", type: "DATE", nullable: true },
+          { name: "status", type: "VARCHAR(20)", nullable: false },
+        ],
+        apiEndpoint: "https://api.intact-risk-navigator.com/v1/firehalls_db/public/equipment_inventory",
+      },
+    ],
+  },
+];
+
+// Calculate totals for databases
+const calculateDatabaseStats = (schemas: Schema[]) => {
+  let totalTables = 0;
+  let totalRows = 0;
+  let totalSizeBytes = 0;
+
+  schemas.forEach((schema) => {
+    totalTables += schema.tables.length;
+    schema.tables.forEach((table) => {
+      totalRows += table.rowCount;
+      // Parse size string (e.g., "2.4 GB" -> 2.4 * 1024 * 1024 * 1024)
+      const sizeMatch = table.size.match(/([\d.]+)\s*(GB|MB|KB)/i);
+      if (sizeMatch) {
+        const value = parseFloat(sizeMatch[1]);
+        const unit = sizeMatch[2].toUpperCase();
+        const multiplier = unit === "GB" ? 1024 * 1024 * 1024 : unit === "MB" ? 1024 * 1024 : 1024;
+        totalSizeBytes += value * multiplier;
+      }
+    });
+  });
+
+  const formatSize = (bytes: number) => {
+    if (bytes >= 1024 * 1024 * 1024) {
+      return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+    } else if (bytes >= 1024 * 1024) {
+      return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    } else {
+      return `${(bytes / 1024).toFixed(2)} KB`;
+    }
+  };
+
+  return {
+    tableCount: totalTables,
+    rowCount: totalRows,
+    size: formatSize(totalSizeBytes),
+  };
+};
+
+const exposureStats = calculateDatabaseStats(exposureDbSchemas);
+const buildingStats = calculateDatabaseStats(buildingDbSchemas);
+const firehallsStats = calculateDatabaseStats(firehallsDbSchemas);
+
+// Main databases with rich data
+export const databases: Database[] = [
+  {
+    name: "exposure_db",
+    tableCount: exposureStats.tableCount,
+    rowCount: exposureStats.rowCount,
+    size: exposureStats.size,
+    lastUpdated: "2024-01-15 10:30:00",
+    owner: "data_engineering",
+    description: "Comprehensive database containing property exposure data, risk assessments, and geographic information for insurance risk analysis",
+    schemas: exposureDbSchemas,
+  },
+  {
+    name: "building_db",
+    tableCount: buildingStats.tableCount,
+    rowCount: buildingStats.rowCount,
+    size: buildingStats.size,
+    lastUpdated: "2024-01-15 11:45:00",
+    owner: "facilities_management",
+    description: "Building inventory database with detailed structural information, inspection records, and maintenance history",
+    schemas: buildingDbSchemas,
+  },
+  {
+    name: "firehalls_db",
+    tableCount: firehallsStats.tableCount,
+    rowCount: firehallsStats.rowCount,
+    size: firehallsStats.size,
+    lastUpdated: "2024-01-15 13:00:00",
+    owner: "fire_services",
+    description: "Fire station database containing station locations, response times, and equipment inventory",
+    schemas: firehallsDbSchemas,
+  },
+  // Empty placeholder databases
+  {
+    name: "claims_db",
+    tableCount: 0,
+    rowCount: 0,
+    size: "0 B",
+    lastUpdated: "2024-01-01 00:00:00",
+    owner: "claims_team",
+    description: "Insurance claims database (empty)",
+    schemas: [],
+  },
+  {
+    name: "policies_db",
+    tableCount: 0,
+    rowCount: 0,
+    size: "0 B",
+    lastUpdated: "2024-01-01 00:00:00",
+    owner: "underwriting",
+    description: "Insurance policies database (empty)",
+    schemas: [],
+  },
+  {
+    name: "analytics_db",
+    tableCount: 0,
+    rowCount: 0,
+    size: "0 B",
+    lastUpdated: "2024-01-01 00:00:00",
+    owner: "analytics_team",
+    description: "Analytics and reporting database (empty)",
+    schemas: [],
+  },
+  {
+    name: "reports_db",
+    tableCount: 0,
+    rowCount: 0,
+    size: "0 B",
+    lastUpdated: "2024-01-01 00:00:00",
+    owner: "reporting_team",
+    description: "Generated reports database (empty)",
+    schemas: [],
+  },
+];
+

@@ -1,4 +1,4 @@
-import { Home, Search, Star } from "lucide-react";
+import { Home, Search, Star, Database } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -14,6 +14,7 @@ import {
 
 const menuItems = [
   { title: "Home", url: "/", icon: Home },
+  { title: "Data Catalogue", url: "/data-catalogue", icon: Database },
   { title: "My Queries", url: "/queries", icon: Search },
   { title: "Favorites", url: "/favorites", icon: Star },
 ];
